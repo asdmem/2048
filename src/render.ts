@@ -1,4 +1,4 @@
-import { Board } from './common';
+import { Board, Dimension } from './common';
 
 export class Renderable {
   htmlCells: HTMLElement[] = [];
@@ -10,7 +10,7 @@ export class Renderable {
   render(board: Board): void {
     board.forEach((row, i) => {
       row.forEach((cell, k) => {
-        this.htmlCells[i * 3 + k].textContent =
+        this.htmlCells[i * Dimension + k].textContent =
           cell === 0 ? "" : cell.toString();
       });
     });
