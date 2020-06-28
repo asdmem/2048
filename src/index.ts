@@ -1,4 +1,4 @@
-import { Game } from './game';
-import { Renderable } from './render';
+import { Game } from "./game";
+import { Renderable } from "./render";
 
-const game = new Game(new Renderable(document));
+const game = new Game(new Renderable(document), window);

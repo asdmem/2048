@@ -6,16 +6,17 @@ import {
   Dimension,
 } from "./common";
 import { Renderable } from "./render";
+import { WinValue } from "./common";
 
 export class Game {
   board: ReferenceBoard = new ReferenceBoard([
-    [2, 2, 8, 4],
-    [2, 0, 0, 0],
-    [2, 2, 4, 0],
-    [2, 2, 4, 0],
+    [2, 4, 8, 16],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
   ]);
 
-  constructor(private renderable: Renderable) {
+  constructor(private renderable: Renderable, private window: Window) {
     this.render();
 
     const values = Object.values(Direction) as string[];
@@ -38,7 +39,7 @@ export class Game {
         case Direction.UP: {
           array = this.board.getColumn(i, direction === Direction.DOWN);
 
-          this.mergeArray(array);
+          changed = this.mergeArray(array) || changed;
 
           break;
         }
@@ -46,7 +47,7 @@ export class Game {
         case Direction.RIGTH: {
           array = this.board.getRow(i, direction === Direction.RIGTH);
 
-          this.mergeArray(array);
+          changed = this.mergeArray(array) || changed;
 
           break;
         }
@@ -54,23 +55,33 @@ export class Game {
     }
 
     if (changed) {
-      // this.board.fillRandomPosition();
+      this.board.fillRandomPosition();
     }
   }
 
-  mergeArray(array: ReferenceCell[]) {
+  mergeArray(array: ReferenceCell[]): boolean {
+    let arrayChanged = false;
+
     shift(array);
 
     array.reduce((a, b) => {
       if (a.value === b.value && a.value !== 0) {
         a.value += b.value;
         b.value = 0;
+
+        if (a.value === WinValue) {
+          this.win();
+        }
+
+        arrayChanged = true;
       }
 
       return b;
     });
 
     shift(array);
+
+    return arrayChanged;
 
     function shift(array: ReferenceCell[]) {
       const copy: number[] = [];
@@ -83,8 +94,20 @@ export class Game {
         }
       });
 
+      if (copy.length > 0) {
+        arrayChanged = true;
+      }
+
       copy.forEach((cell, i) => (array[i].value = cell));
     }
+  }
+
+  win() {
+    this.window.queueMicrotask(() => window.alert("YOU WON!!!"));
+  }
+
+  lose() {
+    this.window.queueMicrotask(() => window.alert("YOU LOSE!!!"));
   }
 
   render(): void {

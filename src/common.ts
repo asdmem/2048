@@ -1,4 +1,5 @@
 export const Dimension = 4;
+export const WinValue = 64;
 
 export enum Direction {
   UP = "ArrowUp",
